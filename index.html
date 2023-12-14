@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        * {
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+
+        .edit__modal {
+            position: fixed;
+            height: 100vh;
+            width: 100vw;
+            top: 0;
+            left: 0;
+            border: 1px solid gray;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal__content {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            padding: 30px;
+            background-color: white;
+            border-radius: 3px;
+            box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+        }
+
+        .modal__close {
+            position: absolute;
+            top: 0px;
+            right: 5px;
+            padding: 8px;
+            cursor: pointer;
+            font-size: 25px;
+        }
+
+        .edit_todo_form {
+            position: absolute;
+            top: 50px;
+        }
+
+        input {
+            font-size: 25px;
+            border: 1px solid #123135;
+            border-radius: 5px;
+        }
+
+        h1 {
+            font-size: 40px;
+        }
+
+        button {
+
+            border: none;
+            outline: none;
+            border-radius: 5px;
+            font-size: 20px;
+            padding: 5px 25px;
+            cursor: pointer;
+        }
+
+        button:hover {
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            gap: 30px;
+            margin: 50px auto 0 auto;
+            box-sizing: border-box;
+        }
+
+        .card {
+            max-width: 250px;
+            height: 200px;
+            padding: 25px;
+            border-radius: 8px;
+            overflow-y: scroll;
+            display: flex;
+            flex-direction: column;
+            align-content: space-between;
+            justify-content: space-between;
+        }
+
+        .icon {
+            display: flex;
+            gap: 10px;
+            justify-content: end;
+        }
+
+        td i,
+        th i {
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .student {
+            border-collapse: collapse;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .student td,
+        .student th {
+            border: 1px solid #ddd;
+            padding: 8px;
+            width: 82px;
+        }
+
+        .menu_back {
+            display: grid;
+            grid-template-columns: auto auto auto auto auto auto auto;
+            justify-content: space-between;
+            margin-top: 350px;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+    </style>
+    <title>Document</title>
+</head>
+
+<body>
+    <h1 style="background-color: none; margin: 20px 0;">Todo App CRUD</h1>
+    <form id="form">
+        <label>
+
+            <input type="text" id="inp" placeholder="Name"><br><br>
+            <input type="text" id="inp2" placeholder="Ball"> <br><br>
+        </label>
+        <button type="submit">Creat</button>
+    </form>
+
+    <div class="edit__modal" id="editModal" style="display: none;">
+        <div class="modal__content">
+            <div class="modal__close">
+                <i class="fa fa-times"></i>
+            </div>
+            <section class="edit__todo__form">
+                <form>
+                    <input type="text" class="edit__todo__input" id="editInput">
+                    <button type="submit" class="button__edit__todo">Save</button>
+                </form>
+            </section>
+        </div>
+    </div>
+
+    <table class="student" style="margin-top: 50px;">
+        <th>№</th>
+        <th>Name</th>
+        <th>Ball</th>
+        <th>Edit</th>
+        <th>Delete</th>
+    </table>
+
+    <table id="data" class="student respon">
+
+    </table>
+    <div class="menu_back">
+        <i style="max-width: 30px;font-size: 30px; color: white !important;overflow: hidden;" id="white"
+            class="fa-solid fa-square-full"></i>
+        <i style="max-width: 30px;font-size: 30px;color: black !important" id="black"
+            class="fa-solid fa-square-full"></i>
+        <i style="max-width: 30px;font-size: 30px;color: red !important" id="red" class="fa-solid fa-square-full"></i>
+        <i style="max-width: 30px;font-size: 30px;color: green!important" id="green"
+            class="fa-solid fa-square-full"></i>
+        <i style="max-width: 30px;font-size: 30px;color: blue!important" id="blue" class="fa-solid fa-square-full"></i>
+        <i style="max-width: 30px;font-size: 30px;color: yellow!important" id="yellow"
+            class="fa-solid fa-square-full"></i>
+        <i style="max-width: 30px;font-size: 30px;color: orange!important" id="orange"
+            class="fa-solid fa-square-full"></i>
+    </div>
+    <script>
+        let body = document.querySelector("body")
+        let form = document.getElementById("form");
+        let inp = document.getElementById("inp");
+        let inp2 = document.getElementById("inp2");
+        let inpAge = document.getElementById("inp-age");
+        let inpJob = document.getElementById("inp-job");
+        let btn = document.getElementById("btn");
+        let data = document.getElementById("data");
+        let editModal = document.getElementById('editModal');
+        let closeModal = document.querySelector('.modal__close');
+        let editModalForm = document.querySelector('.edit__todo__form form');
+        let editInput = document.getElementById('editInput');
+
+        white.addEventListener("click", () => {
+            body.style.background = "white ";
+            body.style.color = "black"
+        })
+        black.addEventListener("click", () => {
+            body.style.background = "black";
+            body.style.color = "white"
+        })
+        red.addEventListener("click", () => {
+            body.style.background = "red";
+            body.style.color = "white"
+        })
+        green.addEventListener("click", () => {
+            body.style.background = "green";
+            body.style.color = "white"
+        })
+        blue.addEventListener("click", () => {
+            body.style.background = "blue";
+            body.style.color = "white"
+        })
+        yellow.addEventListener("click", () => {
+            body.style.background = "yellow";
+            body.style.color = "white"
+        })
+        orange.addEventListener("click", () => {
+            body.style.background = "orange";
+            body.style.color = "white"
+        })
+        let baza = [];
+
+        form.addEventListener("submit", (event) => {
+            event.preventDefault()
+            create();
+            form.reset()
+        })
+
+        editModalForm.addEventListener("submit", function (event) {
+            event.preventDefault()
+            let inpValue = editInput.value.trim();
+            const todoId = +editInput.dataset.todoId;
+            updateEditedData(editInput.value, todoId)
+        })
+
+        function updateEditedData(editInp, id) {
+            const todoIndex = baza.findIndex((todoId) => {
+                return todoId.id === id;
+            })
+            baza[todoIndex].name = editInp
+            hide()
+            localStorage.setItem("baza", JSON.stringify(baza))
+            read()
+        }
+        closeModal.addEventListener("click", () => {
+            hide()
+        })
+        function showModal(todoText, todoId) {
+            editModal.style.display = "block"
+            editInput.value = todoText
+            editInput.dataset.todoId = todoId
+        }
+
+        function hide() {
+            editModal.style.display = "none"
+        }
+
+        let id = 0
+
+        function create() {
+            baza.push({
+                name: inp.value,
+                ball: inp2.value,
+                id: ++id
+            })
+            localStorage.setItem("baza", JSON.stringify(baza))
+            read()
+        }
+
+        function editFc(id) {
+            const editId = baza.find((todoId) => {
+                return todoId.id === id
+            });
+            showModal(editId.name, id)
+        }
+
+        function deleteFc(id) {
+            const idx = baza.findIndex((todoId) => {
+                todoId.id === id
+            })
+
+            baza.splice(idx, 1)
+            localStorage.setItem("baza", JSON.stringify(baza))
+            read()
+        }
+
+
+        function read() {
+            data.innerHTML = ""
+            baza.sort((x, y) => {
+                return y.ball - x.ball
+            })
+            baza.map((item, idx) => {
+                data.innerHTML += ` 
+        <td>${idx + 1}</td>
+        <td>${item.name}</td>
+        <td>${item.ball}</td>
+        <td><i onclick="editFc(${item.id})" class="fa fa-edit"></i></td>
+        <td><i onclick="deleteFc(${item.id})" class="fa fa-trash"></i></td>       
+        `
+            })
+        }
+
+
+        (function () {
+            baza = JSON.parse(localStorage.getItem("baza")) || []
+            read()
+        })()
+    </script>
+</body>
+
+</html>
